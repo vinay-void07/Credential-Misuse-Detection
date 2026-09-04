@@ -90,7 +90,7 @@ def seed_database():
         user_id=priya_id,
         log_id=log3,
         risk_score=91,
-        severity_bucket="CRITICAL",
+        severity_bucket="Critical",
         triggered_features="after_hours,large_download,new_ip",
         explanation_text=(
             "Unusual file download detected outside normal "

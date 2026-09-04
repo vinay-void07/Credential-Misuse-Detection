@@ -1,12 +1,12 @@
 RISK_WEIGHTS = {
-    "ml_anomaly": 30,
-    "off_hours": 10,
-    "unusual_location": 15,
-    "high_volume_access": 15,
-    "sensitive_resource": 20,
-    "privilege_escalation": 25,
-    "failed_auth_attempts": 10,
-    "rare_action_for_user": 10,
+    "ml_anomaly": 22,
+    "off_hours": 7,
+    "unusual_location": 11,
+    "high_volume_access": 11,
+    "sensitive_resource": 15,
+    "privilege_escalation": 19,
+    "failed_auth_attempts": 7,
+    "rare_action_for_user": 7,
 }
 
 
