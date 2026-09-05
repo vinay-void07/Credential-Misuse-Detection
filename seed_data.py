@@ -91,7 +91,7 @@ def seed_database():
         log_id=log3,
         risk_score=91,
         severity_bucket="Critical",
-        triggered_features="off_hours,high_volume_access,unusual_location"
+        triggered_features="off_hours,high_volume_access,unusual_location",
         explanation_text=(
             "Unusual file download detected outside normal "
             "working hours from a new IP address."
