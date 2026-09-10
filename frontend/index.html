@@ -1,0 +1,375 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prism Network — Secure Access Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/portal.css?v=3.0">
+</head>
+<body>
+
+  <!-- Top Global Header -->
+  <header class="portal-header">
+    <div class="brand-wrapper">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24">
+          <polygon points="12 2 2 22 22 22 12 2"/>
+        </svg>
+      </div>
+      <div class="brand-title">PRISM NETWORK</div>
+      <div class="brand-badge">SECURE ACCESS GATEWAY</div>
+    </div>
+
+    <nav class="portal-nav" id="portal-nav" style="display: none;">
+      <a class="nav-link active" data-view="dashboard">Dashboard</a>
+      <a class="nav-link" data-view="resources">Resources</a>
+      <a class="nav-link" data-view="alerts">Security Alerts</a>
+      
+      <div class="nav-user-badge">
+        <span class="user-status-dot"></span>
+        <span id="nav-username" style="font-weight: 600; color: #ffffff;">User</span>
+        <span id="nav-role" class="badge-tag badge-internal">Role</span>
+      </div>
+
+      <button id="btn-logout" class="btn-signout">Sign Out</button>
+    </nav>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 1: SECURE LOGIN VIEW                                                 -->
+  <!-- ========================================================================= -->
+  <div id="view-login" class="view-container active-view">
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>Secure Access Portal</h1>
+          <p>Zero Trust Behavioral Authentication Gateway</p>
+        </div>
+
+        <div id="login-error-banner" class="alert-banner danger" style="display: none;">
+          <span id="login-error-text">Authentication failed</span>
+        </div>
+
+        <div id="login-success-banner" class="alert-banner" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399;">
+          <span><strong>Access Granted:</strong> Identity and access context verified. Loading Dashboard...</span>
+        </div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label" for="username">Username or Corporate Email</label>
+            <input type="text" id="username" class="form-input" value="Michael" required autocomplete="username">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input type="password" id="password" class="form-input" value="abc12345" required autocomplete="current-password">
+          </div>
+
+          <!-- Demo Access Context Section -->
+          <div class="demo-context-box">
+            <div class="demo-context-header">
+              <span class="demo-context-title">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                Demo Access Context
+              </span>
+              <span class="demo-badge">SECURITY SIGNALS</span>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0.75rem;">
+              <label class="form-label" for="demo-scenario" style="font-size: 0.75rem; font-weight: 700; color: #60a5fa;">Select Demo Scenario</label>
+              <select id="demo-scenario" class="form-select" style="padding: 0.5rem 0.75rem; font-size: 0.8125rem; border-color: #3b82f6;">
+                <option value="normal">Scenario 1: Normal Login (Allow -> Open Dashboard)</option>
+                <option value="suspicious">Scenario 2: Suspicious Context (Verification Required)</option>
+                <option value="critical">Scenario 3: Critical Anomaly (Access Blocked / Terminated)</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0.75rem;">
+              <label class="form-label" for="demo-location" style="font-size: 0.75rem;">Access Location</label>
+              <select id="demo-location" class="form-select" style="padding: 0.5rem 0.75rem; font-size: 0.8125rem;">
+                <option value="Chennai Office">Chennai Office (HQ Workstation)</option>
+                <option value="Coimbatore Office">Coimbatore Office (Regional Branch)</option>
+                <option value="Remote">Remote Access (External VPN / Travel)</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="demo-device" style="font-size: 0.75rem;">Client Device Context</label>
+              <select id="demo-device" class="form-select" style="padding: 0.5rem 0.75rem; font-size: 0.8125rem;">
+                <option value="known">Known Corporate Managed Device</option>
+                <option value="new_device">New / Unrecognized Device</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-login" class="btn-primary">
+            <span>Sign In to Portal</span>
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 2: STEP-UP VERIFICATION VIEW (SUSPICIOUS OUTCOME)                     -->
+  <!-- ========================================================================= -->
+  <div id="view-verification" class="view-container">
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>Additional Verification Required</h1>
+          <p>Suspicious or atypical sign-in context detected</p>
+        </div>
+
+        <div class="alert-banner warning">
+          <span>We detected unusual sign-in activity. Please complete this step-up check to proceed.</span>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Detected Anomaly Signals:</div>
+          <ul id="verification-reasons" class="detected-reasons-list">
+            <li>Unrecognized Device Fingerprint</li>
+          </ul>
+        </div>
+
+        <div class="demo-otp-helper">
+          <div>DEMO VERIFICATION CODE</div>
+          <div class="otp-code">123456</div>
+          <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.2rem;">Validated by Prism Network server</div>
+        </div>
+
+        <form id="verification-form">
+          <div class="form-group">
+            <label class="form-label" for="verify-code">Enter 6-Digit Code</label>
+            <input type="text" id="verify-code" class="form-input" style="letter-spacing: 0.2em; font-family: var(--font-mono); font-size: 1.1rem; text-align: center;" value="123456" maxlength="6" required>
+          </div>
+
+          <button type="submit" id="btn-submit-verify" class="btn-primary">
+            <span>Verify & Continue</span>
+          </button>
+
+          <button type="button" id="btn-cancel-verify" class="btn-sm" style="width: 100%; margin-top: 0.75rem; padding: 0.6rem; background: transparent;">
+            Cancel & Return to Login
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 3: SESSION TERMINATED VIEW (CRITICAL RISK / FORCE LOGOUT)             -->
+  <!-- ========================================================================= -->
+  <div id="view-terminated" class="view-container">
+    <div class="auth-wrapper">
+      <div class="auth-card terminated-card">
+        <div class="critical-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/></svg>
+        </div>
+
+        <h1 style="color: #ef4444; font-size: 1.6rem; margin-bottom: 0.5rem;">Access Blocked / Session Terminated</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+          Prism Network terminated this session because critical abnormal activity was detected.
+        </p>
+
+        <div style="background-color: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.3); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.5rem; text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.75rem; text-transform: uppercase; color: #fca5a5; font-weight: 700;">Security Assessment</span>
+            <span class="risk-pill risk-critical">Risk Level: CRITICAL</span>
+          </div>
+          <div id="terminated-reasons-summary" style="font-size: 0.8125rem; color: #cbd5e1; line-height: 1.4;">
+            Multiple security violations or high-velocity bulk exfiltration pattern triggered the automated revocation engine.
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem; font-size: 0.8125rem; color: var(--text-muted);">
+          <strong>Recommended Action:</strong> Return to secure login and verify identity.
+        </div>
+
+        <button id="btn-return-login" class="btn-primary" style="background: #1e293b; border: 1px solid #334155;">
+          Return to Secure Login
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 4: MAIN DASHBOARD VIEW                                                -->
+  <!-- ========================================================================= -->
+  <div id="view-dashboard" class="view-container">
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title">Behavioral Security Dashboard</h1>
+        <p style="color: var(--text-secondary); font-size: 0.875rem;">Real-time Zero-Trust session monitoring & credential telemetry</p>
+      </div>
+      <div>
+        <span id="portal-risk-indicator" class="risk-pill risk-low">Protected • 0/100 LOW</span>
+      </div>
+    </div>
+
+    <!-- Telemetry Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-title">Session State</div>
+        <div id="stat-session-status" class="stat-card-value" style="color: #34d399;">Active</div>
+        <div id="stat-session-device" class="stat-subtext">Fingerprint: Verified</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-title">Behavioral Risk Score</div>
+        <div id="stat-risk-score" class="stat-card-value">0 / 100</div>
+        <div id="stat-risk-level" class="stat-subtext">Normal baseline variance</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-title">Access Context</div>
+        <div id="stat-context-location" class="stat-card-value" style="font-size: 1.25rem;">Chennai Office</div>
+        <div id="stat-context-time" class="stat-subtext">Working Hours Authorized</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-title">Active Security Alerts</div>
+        <div id="stat-active-alerts" class="stat-card-value" style="color: #60a5fa;">0</div>
+        <div class="stat-subtext">Automated alert engine</div>
+      </div>
+    </div>
+
+    <!-- Recent Activity Audit Stream -->
+    <div class="card-section">
+      <div class="section-header">
+        <h2 class="section-title">Live Behavioral Activity Logs (Real Backend Audit Stream)</h2>
+        <button id="btn-refresh-activities" class="btn-sm">Refresh Stream</button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Endpoint</th>
+              <th>Action</th>
+              <th>Sensitivity</th>
+              <th>Status</th>
+              <th>Fingerprint</th>
+            </tr>
+          </thead>
+          <tbody id="table-activities-body">
+            <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading live activity logs...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 5: RESOURCES VIEW (RBAC DEMO)                                         -->
+  <!-- ========================================================================= -->
+  <div id="view-resources" class="view-container">
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title">Enterprise Resource Repository</h1>
+        <p style="color: var(--text-secondary); font-size: 0.875rem;">Access protected corporate documentation under strict RBAC supervision</p>
+      </div>
+    </div>
+
+    <div id="resource-denied-modal" class="modal-overlay">
+      <div class="modal-card">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" fill="#f87171" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-2h-2v2zm0-4h2V7h-2v6z"/></svg>
+          </div>
+          <div>
+            <h3 style="color: #ef4444; font-size: 1.15rem;">Access Denied (HTTP 403)</h3>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Security Violation Registered</span>
+          </div>
+        </div>
+        <p id="resource-denied-message" style="color: #e2e8f0; font-size: 0.875rem; margin-bottom: 1rem;">
+          You do not have permission to access this resource.
+        </p>
+        <div style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--radius-sm); padding: 0.75rem; font-size: 0.8125rem; color: #fca5a5; margin-bottom: 1.5rem;">
+          <strong>Security Notice:</strong> This access attempt has been logged as a behavioral violation and factored into your live session risk score.
+        </div>
+        <button id="btn-close-denied-modal" class="btn-primary" style="background: #1e293b;">Acknowledge & Close</button>
+      </div>
+    </div>
+
+    <!-- Fast Exfiltration Trigger (Demo) -->
+    <div style="background-color: rgba(59, 130, 246, 0.08); border: 1px dashed rgba(59, 130, 246, 0.3); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <div style="font-size: 0.875rem; font-weight: 600; color: #ffffff;">Credential Misuse Demonstration</div>
+        <div style="font-size: 0.8125rem; color: var(--text-secondary);">Simulate high-velocity bulk data exfiltration under valid Senior Dev credentials to test real-time ML anomaly detection.</div>
+      </div>
+      <button id="btn-trigger-bulk-exfil" class="btn-sm" style="background: #dc2626; border-color: #ef4444; padding: 0.6rem 1rem;">
+        Simulate Rapid Bulk Downloads
+      </button>
+    </div>
+
+    <div class="card-section">
+      <div class="section-header">
+        <h2 class="section-title">Organizational Resources</h2>
+        <div>
+          <button class="btn-sm filter-res-btn" data-filter="all">All</button>
+          <button class="btn-sm filter-res-btn" data-filter="public">Public</button>
+          <button class="btn-sm filter-res-btn" data-filter="internal">Internal</button>
+          <button class="btn-sm filter-res-btn" data-filter="confidential">Confidential</button>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Resource Name</th>
+              <th>Sensitivity</th>
+              <th>Description</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="table-resources-body">
+            <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading resources...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 6: ALERTS VIEW                                                        -->
+  <!-- ========================================================================= -->
+  <div id="view-alerts" class="view-container">
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title">Security Alerts & Incident Triage</h1>
+        <p style="color: var(--text-secondary); font-size: 0.875rem;">Explainable anomalies flagged by IsolationForest ML and Deterministic Rules</p>
+      </div>
+    </div>
+
+    <div class="card-section">
+      <div style="overflow-x: auto;">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Severity</th>
+              <th>Risk</th>
+              <th>Alert Title</th>
+              <th>Evidence Summary</th>
+              <th>Recommended Action</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="table-alerts-body">
+            <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading security alerts...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core JavaScript modules with cache-buster -->
+  <script src="/static/js/api.js?v=3.1"></script>
+  <script src="/static/js/app.js?v=3.1"></script>
+</body>
+</html>
